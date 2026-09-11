@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Oberfläche von Prismen üben</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#173b4c;background:#eef4f6;font-size:17px;--navy:#173b4c;--teal:#16877f;--teal2:#64b9aa;--line:#b9cdd3;--paper:#fff;--soft:#f7fafb;--gold:#d58d23}*{box-sizing:border-box}body{margin:0}header{background:var(--navy);color:#fff;padding:18px max(18px,calc((100vw - 1260px)/2))}h1{font-size:1.62rem;margin:0 0 4px}header p{margin:0;color:#d2e6e9}main{max-width:1280px;margin:auto;padding:16px}.toolbar,.buttons{display:flex;align-items:end;gap:10px;flex-wrap:wrap}.toolbar{margin-bottom:14px;padding:14px;background:var(--paper);border:1px solid #d8e4e8;border-radius:16px}.control{display:grid;gap:5px}.control label{font-size:.82rem;font-weight:700;color:#486774}select,input,button{font:inherit;min-height:48px}select,input{padding:9px 12px;border:1px solid #a9c0c7;border-radius:10px;background:white;color:var(--navy)}button{padding:9px 15px;border:1px solid #a9c0c7;border-radius:11px;background:white;color:var(--navy);cursor:pointer}button.primary,button[aria-pressed="true"]{color:white;background:var(--teal);border-color:var(--teal)}button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}button:disabled{opacity:.45;cursor:default}.layout{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(330px,1fr);gap:16px}.card{background:var(--paper);border:1px solid #d8e4e8;border-radius:17px;padding:17px}h2{font-size:1.18rem;margin:0 0 11px}h3{font-size:1rem;margin:16px 0 8px}.stage{position:relative;border-radius:12px;overflow:hidden;background:var(--soft);border:1px solid #e1e9ec}.stage canvas{display:block;width:100%;height:480px;touch-action:none}.badge{position:absolute;left:10px;top:10px;padding:6px 9px;border-radius:8px;background:#fffffff0;font-size:.85rem;font-weight:700}.hint{font-size:.86rem;color:#55717b;margin:9px 0 13px}.base-wrap{margin-top:14px}.base-wrap canvas{display:block;width:100%;height:315px;border-radius:12px;background:var(--soft);border:1px solid #e1e9ec}.task{line-height:1.5;padding:12px 14px;border-left:4px solid var(--teal);background:#edf8f5;margin:0 0 14px}.formula{line-height:1.8;background:#eef7f5;padding:13px;border-radius:11px;margin-top:12px}.solution{border-top:1px solid #d8e4e8;margin-top:15px;padding-top:4px}.solution h3{color:var(--teal)}.step{padding:10px 0;border-bottom:1px solid #e2eaed;line-height:1.75}.step:last-child{border-bottom:0}.math{font-family:Georgia,"Times New Roman",serif;font-size:1.06rem}.fraction{display:inline-flex;vertical-align:middle;flex-direction:column;text-align:center;line-height:1.15;margin:0 4px}.fraction span:first-child{border-bottom:1.5px solid;padding:0 5px 2px}.fraction span:last-child{padding-top:2px}.hidden{display:none!important}.accent{font-weight:750;color:var(--teal)}.check-grid{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center}.check-grid input{width:100%;min-width:0}.feedback{min-height:2.8em;color:#476772;line-height:1.4}.correct{color:#14704f;font-weight:700}.wrong{color:#9b4d24;font-weight:700}.legend{display:flex;gap:15px;flex-wrap:wrap;font-size:.85rem;color:#4e6973}.swatch{display:inline-block;width:14px;height:14px;border:1px solid #6e868e;vertical-align:-2px;margin-right:5px}.base-color{background:#8fd4c5}.side-color{background:#ffe0a3}footer{margin-top:14px;font-size:.83rem;color:#57717b}.poly-control.hidden{display:none}@media(max-width:900px){.layout{grid-template-columns:1fr}.stage canvas{height:440px}.base-wrap canvas{height:330px}}@media(max-width:520px){main{padding:9px}.card,.toolbar{padding:12px}.stage canvas{height:380px}.base-wrap canvas{height:300px}h1{font-size:1.35rem}.toolbar .control{flex:1 1 130px}.toolbar select,.toolbar input{width:100%}.check-grid{grid-template-columns:auto 1fr}.check-grid button{grid-column:1/-1}}@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<header><h1>Oberfläche von Prismen üben</h1><p>Grundfläche · Mantelfläche · Oberfläche</p></header>
+<main>
+<section class="toolbar" aria-label="Aufgabe einstellen">
+  <div class="control"><label for="shape">Form der Grundfläche</label><select id="shape"><option>Quadrat</option><option>Rechteck</option><option>Parallelogramm</option><option>Trapez</option><option>Dreieck</option><option>Allgemeines Viereck</option><option>Vieleck</option></select></div>
+  <div class="control poly-control hidden" id="polyControl"><label for="corners">Ecken des Vielecks</label><input id="corners" type="number" inputmode="numeric" min="5" max="10" value="6"></div>
+  <button id="newTask" class="primary">Neue Aufgabe</button>
+  <button id="highlight" aria-pressed="false">Grundflächen hervorheben</button>
+  <button id="resetView">Ansicht zurücksetzen</button>
+</section>
+<div class="layout">
+  <section class="card">
+    <h2 id="modelTitle">Prisma</h2>
+    <div class="stage"><canvas id="model" aria-label="Drehbares dreidimensionales Prisma"></canvas><span class="badge" id="heightBadge"></span></div>
+    <p class="hint">Drehe das Prisma mit einem Finger. Die Zeichnung ist nicht maßstabsgetreu.</p>
+    <div class="legend"><span><i class="swatch side-color"></i>Mantelflächen</span><span><i class="swatch base-color"></i>Grundflächen bei Hervorhebung</span></div>
+    <div class="base-wrap"><h3>Grundfläche mit Maßen</h3><canvas id="base" aria-label="Bemaßte Grundfläche des Prismas"></canvas></div>
+  </section>
+  <aside class="card">
+    <h2>Deine Aufgabe</h2>
+    <p class="task">Berechne zuerst den Grundflächeninhalt <strong>G</strong>, dann die Mantelfläche <strong>M</strong> und schließlich die Oberfläche <strong>O</strong>. Rechne auf Papier oder in Goodnotes.</p>
+    <div class="check-grid">
+      <label for="answerG">G =</label><input id="answerG" inputmode="decimal" autocomplete="off" aria-label="Grundflächeninhalt"><strong>cm²</strong>
+      <label for="answerM">M =</label><input id="answerM" inputmode="decimal" autocomplete="off" aria-label="Mantelfläche"><strong>cm²</strong>
+      <label for="answerO">O =</label><input id="answerO" inputmode="decimal" autocomplete="off" aria-label="Oberflächeninhalt"><strong>cm²</strong>
+    </div>
+    <div class="buttons" style="margin-top:12px"><button id="check">Ergebnisse prüfen</button><button id="show" class="primary">Lösung anzeigen</button></div>
+    <p id="feedback" class="feedback" aria-live="polite"></p>
+    <div id="solution" class="solution hidden" aria-live="polite"></div>
+  </aside>
+</div>
+<footer>Alle Maße sind in Zentimetern angegeben. Die Datei funktioniert ohne Internetverbindung und speichert keine Daten.</footer>
+</main>
+<script>
+'use strict';
+const $=id=>document.getElementById(id), TAU=Math.PI*2;
+const fmt=n=>{const x=Math.abs(n-Math.round(n))<1e-8?Math.round(n):Math.round(n*100)/100;return String(x).replace('.',',')};
+const num=s=>Number(String(s).trim().replace(',','.'));
+const rand=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const dist=(a,b)=>Math.hypot(b[0]-a[0],b[1]-a[1]);
+const polygonArea=p=>Math.abs(p.reduce((s,q,i)=>s+q[0]*p[(i+1)%p.length][1]-q[1]*p[(i+1)%p.length][0],0))/2;
+const perimeter=p=>p.reduce((s,q,i)=>s+dist(q,p[(i+1)%p.length]),0);
+const fraction=(top,bottom)=>'<span class="fraction"><span>'+top+'</span><span>'+bottom+'</span></span>';
+let task, yaw=.68, tilt=.58, drag=null, highlighted=false;
+function makeTask(kind){
+  const H=rand(4,12); let p,meta={},parts=[];
+  if(kind==='Quadrat'){const a=rand(3,9);p=[[0,0],[a,0],[a,a],[0,a]];meta={a};parts=[{name:'Quadrat',formula:a+' cm · '+a+' cm',area:a*a}];}
+  if(kind==='Rechteck'){let a=rand(5,11),b=rand(3,8);if(a===b)b--;p=[[0,0],[a,0],[a,b],[0,b]];meta={a,b};parts=[{name:'Rechteck',formula:a+' cm · '+b+' cm',area:a*b}];}
+  if(kind==='Parallelogramm'){const g=rand(6,11),hg=4,shift=3;p=[[0,0],[g,0],[g+shift,hg],[shift,hg]];meta={g,hg,side:5,shift};parts=[{name:'Parallelogramm',formula:g+' cm · '+hg+' cm',area:g*hg}];}
+  if(kind==='Trapez'){const a=2*rand(5,7),c=a-6,hg=4;p=[[0,0],[a,0],[a-3,hg],[3,hg]];meta={a,c,hg,leg:5};parts=[{name:'Trapez',formula:fraction('('+a+' cm + '+c+' cm) · '+hg+' cm','2'),area:(a+c)*hg/2}];}
+  if(kind==='Dreieck'){const variant=Math.random()<.5?0:1,g=variant?8:6,hg=variant?3:4;p=[[0,0],[g,0],[g/2,hg]];meta={g,hg,side:5};parts=[{name:'Dreieck',formula:fraction(g+' cm · '+hg+' cm','2'),area:g*hg/2}];}
+  if(kind==='Allgemeines Viereck'){
+    const variants=[{d:10,x1:3,h1:4,x2:6,h2:2},{d:12,x1:4,h1:5,x2:7,h2:3},{d:9,x1:2,h1:5,x2:6,h2:3}],v=variants[rand(0,variants.length-1)];
+    p=[[0,0],[v.x1,v.h1],[v.d,0],[v.x2,-v.h2]];meta={...v};meta.edgeLengths=p.map((q,i)=>Math.round(dist(q,p[(i+1)%p.length])*10)/10);parts=[{name:'Teilfläche A1 (Dreieck)',formula:fraction(v.d+' cm · '+v.h1+' cm','2'),area:v.d*v.h1/2},{name:'Teilfläche A2 (Dreieck)',formula:fraction(v.d+' cm · '+v.h2+' cm','2'),area:v.d*v.h2/2}];
+  }
+  if(kind==='Vieleck'){
+    const n=Math.max(5,Math.min(10,parseInt($('corners').value,10)||6)),k=n-2;let heights=[rand(3,5)],widths=[],x=[0];
+    for(let i=1;i<k;i++){let options=[];for(const d of [-4,-3,3,4]){const v=heights[i-1]+d;if(v>=2&&v<=10)options.push(d)}const d=options[rand(0,options.length-1)];widths.push(Math.abs(d)===4?3:4);heights.push(heights[i-1]+d);x.push(x[i-1]+widths[i-1]);}
+    p=[[0,0],[x[k-1],0]];for(let i=k-1;i>=0;i--)p.push([x[i],heights[i]]);
+    meta={n,heights,widths,x};parts=widths.map((w,i)=>({name:'Teilfläche A'+(i+1)+' (Trapez)',formula:fraction('('+heights[i]+' cm + '+heights[i+1]+' cm) · '+w+' cm','2'),area:(heights[i]+heights[i+1])*w/2}));
+  }
+  const edgeLengths=meta.edgeLengths||p.map((q,i)=>dist(q,p[(i+1)%p.length])),G=polygonArea(p),u=edgeLengths.reduce((s,x)=>s+x,0),M=u*H,O=2*G+M;
+  return {kind,p,H,meta,parts,edgeLengths,G,u,M,O};
+}
+function arrow(ctx,a,b,label,offset=12,color='#177f79'){
+  ctx.save();ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=1.25;ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke();const ang=Math.atan2(b[1]-a[1],b[0]-a[0]);for(const [q,r] of [[a,ang],[b,ang+Math.PI]]){ctx.beginPath();ctx.moveTo(...q);ctx.lineTo(q[0]+7*Math.cos(r-.45),q[1]+7*Math.sin(r-.45));ctx.moveTo(...q);ctx.lineTo(q[0]+7*Math.cos(r+.45),q[1]+7*Math.sin(r+.45));ctx.stroke()}const mx=(a[0]+b[0])/2+Math.cos(ang-Math.PI/2)*offset,my=(a[1]+b[1])/2+Math.sin(ang-Math.PI/2)*offset;ctx.font='600 13px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';const tw=ctx.measureText(label).width;ctx.fillStyle='#f7fafbeF';ctx.fillRect(mx-tw/2-3,my-9,tw+6,18);ctx.fillStyle=color;ctx.fillText(label,mx,my);ctx.restore();
+}
+function resize(c){const w=c.clientWidth,h=c.clientHeight,d=Math.min(devicePixelRatio||1,2);if(!w||!h)return null;c.width=w*d;c.height=h*d;const ctx=c.getContext('2d');ctx.setTransform(d,0,0,d,0,0);ctx.clearRect(0,0,w,h);return [ctx,w,h];}
+function drawModel(){
+  if(!task)return;const out=resize($('model'));if(!out)return;const [ctx,w,h]=out,a=Math.cos(yaw),b=Math.sin(yaw),st=Math.sin(tilt),ct=Math.cos(tilt);
+  const raw=([x,y,z])=>[a*x-b*y,st*(b*x+a*y)-ct*z,ct*(b*x+a*y)+st*z];
+  const faces=[];const base=task.p.map(q=>[q[0],q[1],0]),top=task.p.map(q=>[q[0],q[1],task.H]);
+  faces.push({v:base,fill:highlighted?'#58b8a6':'#dbe6e8',base:true});faces.push({v:[...top].reverse(),fill:highlighted?'#8fd4c5':'#e9f0f1',base:true});
+  task.p.forEach((q,i)=>{const r=task.p[(i+1)%task.p.length];faces.push({v:[[q[0],q[1],0],[r[0],r[1],0],[r[0],r[1],task.H],[q[0],q[1],task.H]],fill:i%2?'#ffd58a':'#ffe6b5'});});
+  faces.forEach(f=>f.depth=f.v.reduce((s,v)=>s+raw(v)[2],0)/f.v.length);faces.sort((x,y)=>x.depth-y.depth);
+  const all=faces.flatMap(f=>f.v.map(raw)),xs=all.map(q=>q[0]),ys=all.map(q=>q[1]),minx=Math.min(...xs),maxx=Math.max(...xs),miny=Math.min(...ys),maxy=Math.max(...ys),scale=Math.min((w-80)/(maxx-minx),(h-85)/(maxy-miny));const ox=w/2-(minx+maxx)/2*scale,oy=h/2-(miny+maxy)/2*scale,p=q=>{const r=raw(q);return[ox+r[0]*scale,oy+r[1]*scale]};
+  for(const f of faces){ctx.beginPath();f.v.forEach((q,i)=>ctx[i?'lineTo':'moveTo'](...p(q)));ctx.closePath();ctx.fillStyle=f.fill;ctx.fill();ctx.strokeStyle='#35545f';ctx.lineWidth=1.1;ctx.stroke();}
+  const maxxP=Math.max(...task.p.map(q=>q[0]));arrow(ctx,p([maxxP+1,0,0]),p([maxxP+1,0,task.H]),'hₖ = '+fmt(task.H)+' cm',38,'#9b6218');
+}
+function edgeLabel(ctx,p1,p2,label,centroid,extra=14){const mx=(p1[0]+p2[0])/2,my=(p1[1]+p2[1])/2,dx=p2[0]-p1[0],dy=p2[1]-p1[1],len=Math.hypot(dx,dy)||1;let nx=-dy/len,ny=dx/len;if((mx-centroid[0])*nx+(my-centroid[1])*ny<0){nx=-nx;ny=-ny}const x=mx+nx*extra,y=my+ny*extra;ctx.font='600 12px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';const tw=ctx.measureText(label).width;ctx.fillStyle='#f7fafbeF';ctx.fillRect(x-tw/2-2,y-8,tw+4,16);ctx.fillStyle='#173b4c';ctx.fillText(label,x,y);}
+function rightMark(ctx,q,below=false){ctx.save();ctx.strokeStyle='#8f601b';ctx.lineWidth=1.1;ctx.beginPath();ctx.arc(q[0],q[1],9,below?Math.PI/2:Math.PI,below?Math.PI:1.5*Math.PI);ctx.stroke();ctx.beginPath();ctx.arc(q[0]-3.5,q[1]+(below?3.5:-3.5),1.5,0,TAU);ctx.fillStyle='#173b4c';ctx.fill();ctx.restore();}
+function drawBase(){
+  if(!task)return;const out=resize($('base'));if(!out)return;const [ctx,w,h]=out,pts=task.p,minx=Math.min(...pts.map(q=>q[0])),maxx=Math.max(...pts.map(q=>q[0])),miny=Math.min(...pts.map(q=>q[1])),maxy=Math.max(...pts.map(q=>q[1])),padX=58,padY=52,scale=Math.min((w-2*padX)/(maxx-minx||1),(h-2*padY)/(maxy-miny||1));const ox=w/2-(minx+maxx)/2*scale,oy=h/2+(miny+maxy)/2*scale,p=q=>[ox+q[0]*scale,oy-q[1]*scale],sp=pts.map(p),centroid=[sp.reduce((s,q)=>s+q[0],0)/sp.length,sp.reduce((s,q)=>s+q[1],0)/sp.length];
+  ctx.beginPath();sp.forEach((q,i)=>ctx[i?'lineTo':'moveTo'](...q));ctx.closePath();ctx.fillStyle='#d8eee9';ctx.fill();ctx.strokeStyle='#173b4c';ctx.lineWidth=2;ctx.stroke();
+  sp.forEach((q,i)=>edgeLabel(ctx,q,sp[(i+1)%sp.length],fmt(task.edgeLengths[i])+' cm',centroid,task.kind==='Vieleck'?12:15));
+  ctx.save();ctx.setLineDash([5,4]);ctx.strokeStyle='#a16a20';ctx.lineWidth=1.3;
+  const m=task.meta;
+  if(task.kind==='Parallelogramm'){const a=p([m.shift,0]),b=p([m.shift,m.hg]);ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke();ctx.restore();rightMark(ctx,a);arrow(ctx,a,b,'h = '+m.hg+' cm',-40,'#9b6218');}
+  else if(task.kind==='Trapez'){const a=p([3,0]),b=p([3,m.hg]);ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke();ctx.restore();rightMark(ctx,a);arrow(ctx,a,b,'h = '+m.hg+' cm',-40,'#9b6218');}
+  else if(task.kind==='Dreieck'){const a=p([m.g/2,0]),b=p([m.g/2,m.hg]);ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke();ctx.restore();rightMark(ctx,a);arrow(ctx,a,b,'h = '+m.hg+' cm',-42,'#9b6218');}
+  else if(task.kind==='Allgemeines Viereck'){
+    const A=p([0,0]),C=p([m.d,0]),F1=p([m.x1,0]),B=p([m.x1,m.h1]),F2=p([m.x2,0]),D=p([m.x2,-m.h2]);ctx.beginPath();ctx.moveTo(...A);ctx.lineTo(...C);ctx.moveTo(...F1);ctx.lineTo(...B);ctx.moveTo(...F2);ctx.lineTo(...D);ctx.stroke();ctx.restore();rightMark(ctx,F1);rightMark(ctx,F2,true);arrow(ctx,A,C,'d = '+m.d+' cm',-15,'#177f79');arrow(ctx,F1,B,'h₁ = '+m.h1+' cm',-38,'#9b6218');arrow(ctx,F2,D,'h₂ = '+m.h2+' cm',38,'#9b6218');
+  }
+  else if(task.kind==='Vieleck'){
+    for(let i=0;i<m.heights.length;i++){const a=p([m.x[i],0]),b=p([m.x[i],m.heights[i]]);ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke();}
+    ctx.restore();for(let i=0;i<m.heights.length;i++){const a=p([m.x[i],0]),b=p([m.x[i],m.heights[i]]);rightMark(ctx,a);arrow(ctx,a,b,'h'+(i+1)+' = '+m.heights[i]+' cm',i%2?-27:27,'#9b6218');}
+    for(let i=0;i<m.widths.length;i++){const a=p([m.x[i],0]),b=p([m.x[i+1],0]);arrow(ctx,[a[0],a[1]-15],[b[0],b[1]-15],m.widths[i]+' cm',-12,'#177f79');}
+  }else ctx.restore();
+}
+function solutionHtml(){
+  const t=task,lengths=t.edgeLengths,groups=[];let g='';
+  for(const length of lengths){const found=groups.find(x=>Math.abs(x.length-length)<1e-8);if(found)found.count++;else groups.push({length,count:1});}
+  if(t.kind==='Vieleck'){
+    g='<p>Die gestrichelten Höhen zerlegen das Vieleck in bekannte <strong>Trapeze</strong>.</p>'+t.parts.map(x=>'<div class="math">'+x.name+': '+x.formula+' = <strong>'+fmt(x.area)+' cm²</strong></div>').join('')+'<div class="math">G = '+t.parts.map(x=>fmt(x.area)+' cm²').join(' + ')+' = <strong>'+fmt(t.G)+' cm²</strong></div>';
+  }else if(t.kind==='Allgemeines Viereck'){
+    g='<p>Die gestrichelte Diagonale zerlegt das Viereck in zwei <strong>Dreiecke</strong>.</p>'+t.parts.map(x=>'<div class="math">'+x.name+': '+x.formula+' = <strong>'+fmt(x.area)+' cm²</strong></div>').join('')+'<div class="math">G = '+t.parts.map(x=>fmt(x.area)+' cm²').join(' + ')+' = <strong>'+fmt(t.G)+' cm²</strong></div>';
+  }else{const x=t.parts[0];g='<div class="math">G = '+x.formula+' = <strong>'+fmt(t.G)+' cm²</strong></div>';}
+  const faces=groups.map((x,i)=>{const area=x.length*t.H;return '<div>A<sub>M'+(i+1)+'</sub> = '+fmt(x.length)+' cm · '+fmt(t.H)+' cm = <strong>'+fmt(area)+' cm²</strong>'+(x.count>1?' <span class="hint">('+x.count+' gleich große Seitenflächen)</span>':'')+'</div>'}).join('');
+  const mantleTerms=groups.map((x,i)=>(x.count>1?x.count+' · ':'')+'A<sub>M'+(i+1)+'</sub>').join(' + '),mantleValues=groups.map(x=>(x.count>1?x.count+' · ':'')+fmt(x.length*t.H)+' cm²').join(' + ');
+  return '<h3>1. Grundfläche berechnen</h3><div class="step">'+g+'</div><h3>2. Rechteckige Seitenflächen berechnen</h3><div class="step math">'+faces+'<br>M = '+mantleTerms+'<br>M = '+mantleValues+' = <strong>'+fmt(t.M)+' cm²</strong></div><h3>3. Oberfläche berechnen</h3><div class="step math">O = 2 · G + M<br>O = 2 · '+fmt(t.G)+' cm² + '+fmt(t.M)+' cm²<br><span class="accent">O = '+fmt(t.O)+' cm²</span></div>';
+}
+function update(){
+  const adjective={Quadrat:'quadratischer',Rechteck:'rechteckiger',Parallelogramm:'parallelogrammförmiger',Trapez:'trapezförmiger',Dreieck:'dreieckiger','Allgemeines Viereck':'allgemeiner viereckiger'};
+  task=makeTask($('shape').value);highlighted=false;$('highlight').setAttribute('aria-pressed','false');$('highlight').textContent='Grundflächen hervorheben';$('modelTitle').textContent='Prisma mit '+(task.kind==='Vieleck'?task.meta.n+'-eckiger':adjective[task.kind])+' Grundfläche';$('heightBadge').textContent='Körperhöhe hₖ = '+fmt(task.H)+' cm';['answerG','answerM','answerO'].forEach(id=>$(id).value='');$('feedback').textContent='';$('feedback').className='feedback';$('solution').classList.add('hidden');$('show').textContent='Lösung anzeigen';drawModel();drawBase();
+}
+$('shape').onchange=()=>{$('polyControl').classList.toggle('hidden',$('shape').value!=='Vieleck');update()};$('corners').onchange=update;$('newTask').onclick=update;
+$('highlight').onclick=()=>{highlighted=!highlighted;$('highlight').setAttribute('aria-pressed',String(highlighted));$('highlight').textContent=highlighted?'Grundflächen ausblenden':'Grundflächen hervorheben';drawModel()};
+$('resetView').onclick=()=>{yaw=.68;tilt=.58;drawModel()};
+$('show').onclick=()=>{const el=$('solution'),hide=!el.classList.contains('hidden');if(hide){el.classList.add('hidden');$('show').textContent='Lösung anzeigen'}else{el.innerHTML=solutionHtml();el.classList.remove('hidden');$('show').textContent='Lösung ausblenden'}};
+$('check').onclick=()=>{const vals=[$('answerG').value,$('answerM').value,$('answerO').value],targets=[task.G,task.M,task.O];if(vals.some(v=>v.trim()===''||!Number.isFinite(num(v)))){$('feedback').textContent='Trage bei G, M und O jeweils eine Zahl ein. Die Einheit steht schon daneben.';$('feedback').className='feedback wrong';return}const ok=vals.map((v,i)=>Math.abs(num(v)-targets[i])<.011),names=['G','M','O'];if(ok.every(Boolean)){$('feedback').textContent='Richtig – alle drei Ergebnisse stimmen.';$('feedback').className='feedback correct'}else{$('feedback').textContent='Prüfe noch: '+names.filter((_,i)=>!ok[i]).join(', ')+'. Berechne die rechteckigen Seitenflächen einzeln und zähle gleich große Flächen in der richtigen Anzahl.';$('feedback').className='feedback wrong'}};
+const canvas=$('model');canvas.onpointerdown=e=>{drag=[e.clientX,e.clientY];canvas.setPointerCapture(e.pointerId)};canvas.onpointermove=e=>{if(!drag)return;yaw+=(e.clientX-drag[0])*.008;tilt=Math.max(.2,Math.min(1.15,tilt+(e.clientY-drag[1])*.005));drag=[e.clientX,e.clientY];drawModel()};canvas.onpointerup=canvas.onpointercancel=()=>drag=null;
+new ResizeObserver(()=>{drawModel();drawBase()}).observe(document.querySelector('.layout'));update();
+</script>
+</body>
+</html>
